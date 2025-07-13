@@ -1,8 +1,8 @@
-# Migration Scripts
+# Setup Scripts
 
-Complete toolset for migrating from Mixpanel to your own PostgreSQL analytics infrastructure.
+Complete your analytics setup in 4 sequential steps. Each script handles one specific task to make the process clear and debuggable.
 
-## Setup
+## Prerequisites
 
 1. **Configure environment variables:**
    ```bash
@@ -10,62 +10,55 @@ Complete toolset for migrating from Mixpanel to your own PostgreSQL analytics in
    # Edit .env with your database and Mixpanel credentials
    ```
 
-2. **Install Python dependencies (for Mixpanel export):**
+2. **Install dependencies:**
    ```bash
-   pip install requests python-dotenv psycopg2-binary
+   npm install  # For Node.js scripts
+   pip install requests python-dotenv psycopg2-binary  # For Python utilities
    ```
 
-## Migration Process
+## Step-by-Step Setup
 
-### 1. Test Database Connection
+### Step 1: Test Database Connection
 ```bash
-# Test with Python
-python3 scripts/test-db-connection.py
-
-# Test with Node.js (once implemented)
-node scripts/test-db-connection.js
+node 1-test-database.js
 ```
+**Purpose**: Verify your PostgreSQL credentials and connectivity before proceeding.
 
-### 2. Create Analytics Table
+### Step 2: Create Analytics Table
 ```bash
-node scripts/create-analytics-table.js
+node 2-create-table.js
 ```
+**Purpose**: Create the optimized analytics table with proper indexes.
 
-### 3. Export Mixpanel Data
+### Step 3: Download Mixpanel Data (Optional)
 ```bash
-# Incremental download (recommended for ongoing sync)
-python3 scripts/mixpanel-exporter.py --mode incremental
+# Download last 365 days
+node 3-download-mixpanel.js --days-back 365
 
-# Full historical download
-python3 scripts/mixpanel-exporter.py --mode full --days-back 730
+# Download specific date range
+node 3-download-mixpanel.js --start-date 2024-01-01 --end-date 2024-12-31
 
-# Specific date range
-python3 scripts/mixpanel-exporter.py \
-  --mode full \
-  --start-date 2024-01-01 \
-  --end-date 2024-12-31
+# Incremental download (from last file to yesterday)
+node 3-download-mixpanel.js --incremental
 ```
+**Purpose**: Export your historical data from Mixpanel. Skip if starting fresh.
 
-### 4. Import to PostgreSQL
+### Step 4: Import Mixpanel Data (Optional)
 ```bash
 # Import all downloaded data
-node scripts/import-mixpanel-data.js --input-dir ./mixpanel_data
+node 4-import-mixpanel.js
 
-# Import specific files
-node scripts/import-mixpanel-data.js \
-  --input-dir ./mixpanel_data \
-  --start-date 2024-01-01 \
-  --batch-size 1000
+# Import with custom options
+node 4-import-mixpanel.js --batch-size 1000 --input-dir ./mixpanel_data
 ```
+**Purpose**: Transform and load your Mixpanel data into PostgreSQL.
 
-### 5. Verify Migration
+### Verification
 ```bash
-# Check data quality and counts
-node scripts/verify-migration.js
-
-# Compare with original Mixpanel data
-node scripts/compare-counts.js --date 2024-07-12
+# Verify complete setup
+node verify-setup.js
 ```
+**Purpose**: Check that everything is working correctly.
 
 ## Script Details
 
