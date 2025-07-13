@@ -109,7 +109,24 @@ See the [Setup Guide](./setup/README.md) for complete configuration instructions
 - Client integration
 - SSL certificate configuration
 
-## Development
+## Testing & Development
+
+### Demo Page
+A comprehensive demo page is available at `/demo/index.html` when the server is running:
+
+```bash
+npm start
+# Open http://localhost:3000/demo/index.html
+```
+
+The demo page includes:
+- 🎯 **Event tracking tests** (Page View, Button Click, Custom Events)
+- 👤 **User identification** and profile management
+- ⚙️ **Analytics controls** (mute/unmute, reset)
+- 📊 **API health monitoring** with real-time metrics
+- 📝 **Debug console** showing all client-server communication
+
+### Development Commands
 
 ```bash
 npm install
@@ -117,7 +134,7 @@ npm run dev  # Development with nodemon
 npm start    # Production
 ```
 
-For testing, database setup, and deployment instructions, see the [Setup Guide](./setup/README.md).
+For complete database setup, migration tools, and deployment instructions, see the [Setup Guide](./setup/README.md).
 
 ## Benefits
 

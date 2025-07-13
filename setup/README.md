@@ -167,13 +167,87 @@ node --max-old-space-size=4096 setup/5-import-mixpanel.js
 3. Ensure all environment variables are set correctly
 4. Verify database permissions and connectivity
 
+## Database Schema
+
+The analytics API uses a 3-table architecture optimized for analytics queries:
+
+### `analytics` table (events)
+```sql
+CREATE TABLE analytics (
+    id BIGSERIAL PRIMARY KEY,
+    event_name VARCHAR(255) NOT NULL,
+    event_category VARCHAR(100),
+    event_detail TEXT,
+    distinct_id VARCHAR(255) NOT NULL,
+    user_id VARCHAR(255),
+    session_id VARCHAR(255),
+    platform VARCHAR(50),
+    country_code CHAR(2),
+    timestamp TIMESTAMPTZ NOT NULL,
+    properties JSONB
+);
+```
+
+### `analytics_users` table (user profiles)
+```sql
+CREATE TABLE analytics_users (
+    id BIGSERIAL PRIMARY KEY,
+    user_id VARCHAR(255) UNIQUE NOT NULL,
+    distinct_id VARCHAR(255) NOT NULL,
+    user_state VARCHAR(20) NOT NULL DEFAULT 'anonymous',
+    device_ids TEXT[],
+    first_seen TIMESTAMPTZ NOT NULL,
+    last_seen TIMESTAMPTZ NOT NULL,
+    properties JSONB
+);
+```
+
+### `identity_mappings` table (identity stitching)
+```sql
+CREATE TABLE identity_mappings (
+    id BIGSERIAL PRIMARY KEY,
+    anonymous_id VARCHAR(255) NOT NULL,
+    user_id VARCHAR(255) NOT NULL,
+    device_id VARCHAR(255),
+    confidence_score DECIMAL(3,2) DEFAULT 1.0,
+    events_stitched INTEGER DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL
+);
+```
+
+**24 optimized indexes** are created automatically for fast querying across all analytics dimensions.
+
+## Testing & Verification
+
+### Demo Page
+After setup, test the complete integration with the demo page:
+
+```bash
+npm start
+# Open http://localhost:3000/demo/index.html
+```
+
+The demo page provides comprehensive testing of:
+- Event tracking and identity stitching
+- User profile management  
+- API health monitoring
+- Real-time debug output
+
+### Database Monitoring
+Check your data with the included monitoring script:
+
+```bash
+node check-events.js  # View recent events
+```
+
 ## Next Steps
 
 After completing setup:
 
 1. **Start the API**: `npm run dev` (development) or `npm start` (production)
-2. **Test the endpoints**: Use curl or Postman to verify `/health`, `/track`, `/engage`
-3. **Update your clients**: Point Mixpanel tracking to your API endpoints
-4. **Monitor data**: Use `node setup/3-verify-setup.js` to check data flow
+2. **Test with demo page**: Visit `/demo/index.html` for interactive testing
+3. **Verify endpoints**: Use curl or Postman to check `/health`, `/track`, `/engage`
+4. **Update your clients**: Point analytics tracking to your API endpoints (see [analytics-client](https://github.com/trainerday/analytics-client))
+5. **Monitor data**: Use `node check-events.js` to verify data flow
 
-Your analytics infrastructure is now independent of Mixpanel!
+Your analytics infrastructure is now independent of external services!
