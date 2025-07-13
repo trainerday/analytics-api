@@ -124,7 +124,7 @@ npm install @trainerday/analytics-client
 
 **Option 2: CDN**
 ```html
-<script src="https://unpkg.com/@trainerday/analytics-client@latest/dist/mixpanel-lite.min.js"></script>
+<script src="https://unpkg.com/@trainerday/analytics-client@latest/dist/analytics-client.min.js"></script>
 ```
 
 ### Configuration  
