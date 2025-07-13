@@ -107,7 +107,7 @@
         
         <div class="config-section">
             <h3>Configuration</h3>
-            <p><strong>API Endpoint:</strong> <code>http://localhost:3000</code></p>
+            <p><strong>API Endpoint:</strong> <code id="apiEndpoint">Loading...</code></p>
             <p><strong>Status:</strong> <span id="apiStatus" class="status disconnected">Checking...</span></p>
             <button onclick="checkAPIHealth()">Check API Health</button>
         </div>
@@ -164,8 +164,8 @@ Waiting for events...
         
         // Initialize analytics client
         analytics.init('demo-token', {
-            trackingUrl: 'http://localhost:3000/track?data=',
-            engageUrl: 'http://localhost:3000/engage?data=',
+            trackingUrl: window.location.origin + '/track?data=',
+            engageUrl: window.location.origin + '/engage?data=',
             debug: true
         });
 
@@ -185,7 +185,7 @@ Waiting for events...
         // API Health Check
         async function checkAPIHealth() {
             try {
-                const response = await fetch('http://localhost:3000/health');
+                const response = await fetch('/health');
                 const data = await response.json();
                 
                 if (data.status === 'healthy') {
@@ -301,7 +301,7 @@ Waiting for events...
         // API Metrics
         async function getHealthMetrics() {
             try {
-                const response = await fetch('http://localhost:3000/health');
+                const response = await fetch('/health');
                 const data = await response.json();
                 
                 log('=== API HEALTH METRICS ===');
@@ -320,7 +320,7 @@ Waiting for events...
 
         async function viewIdentityMetrics() {
             try {
-                const response = await fetch('http://localhost:3000/health');
+                const response = await fetch('/health');
                 const data = await response.json();
                 
                 log('=== IDENTITY METRICS ===');
@@ -337,6 +337,9 @@ Waiting for events...
 
         // Auto-check API health on page load
         document.addEventListener('DOMContentLoaded', function() {
+            // Display current API endpoint
+            document.getElementById('apiEndpoint').textContent = window.location.origin;
+            
             checkAPIHealth();
             
             // Track page load
