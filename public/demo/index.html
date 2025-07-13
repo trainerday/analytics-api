@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Client Demo</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .demo-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+        .demo-section h3 {
+            color: #34495e;
+            margin-top: 0;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .success {
+            background-color: #27ae60;
+        }
+        .warning {
+            background-color: #f39c12;
+        }
+        .danger {
+            background-color: #e74c3c;
+        }
+        #output {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status.connected {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status.disconnected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .user-form {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .user-form input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .config-section {
+            background-color: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Analytics Client Demo</h1>
+        
+        <div class="config-section">
+            <h3>Configuration</h3>
+            <p><strong>API Endpoint:</strong> <code>http://localhost:3000</code></p>
+            <p><strong>Status:</strong> <span id="apiStatus" class="status disconnected">Checking...</span></p>
+            <button onclick="checkAPIHealth()">Check API Health</button>
+        </div>
+
+        <div class="demo-section">
+            <h3>🎯 Event Tracking</h3>
+            <p>Test basic event tracking functionality:</p>
+            <button onclick="trackPageView()">Track Page View</button>
+            <button onclick="trackButtonClick()">Track Button Click</button>
+            <button onclick="trackCustomEvent()">Track Custom Event</button>
+            <button class="warning" onclick="trackError()">Track Error Event</button>
+        </div>
+
+        <div class="demo-section">
+            <h3>👤 User Identification</h3>
+            <p>Test user identification and profile management:</p>
+            <div class="user-form">
+                <input type="email" id="userEmail" placeholder="user@example.com" value="demo@trainerday.com">
+                <button onclick="identifyUser()">Identify User</button>
+                <button class="success" onclick="setUserProfile()">Set Profile</button>
+                <button class="danger" onclick="resetUser()">Reset Identity</button>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3>⚙️ Analytics Controls</h3>
+            <p>Test analytics client controls:</p>
+            <button onclick="muteAnalytics()">Mute Analytics</button>
+            <button onclick="unmuteAnalytics()">Unmute Analytics</button>
+            <button onclick="checkMuteStatus()">Check Mute Status</button>
+            <button class="warning" onclick="clearLocalStorage()">Clear LocalStorage</button>
+        </div>
+
+        <div class="demo-section">
+            <h3>📊 API Health Check</h3>
+            <p>Monitor API status and database metrics:</p>
+            <button onclick="getHealthMetrics()">Get Health Metrics</button>
+            <button onclick="viewIdentityMetrics()">View Identity Metrics</button>
+        </div>
+
+        <div class="demo-section">
+            <h3>📝 Debug Output</h3>
+            <button onclick="clearOutput()">Clear Log</button>
+            <div id="output">Analytics Client Demo Ready 🚀
+Waiting for events...
+            </div>
+        </div>
+    </div>
+
+    <script src="analytics-client.min.js"></script>
+    <script>
+        // Alias for cleaner code
+        var analytics = mixpanel;
+        
+        // Initialize analytics client
+        analytics.init('demo-token', {
+            trackingUrl: 'http://localhost:3000/track?data=',
+            engageUrl: 'http://localhost:3000/engage?data=',
+            debug: true
+        });
+
+        // Utility functions
+        function log(message, type = 'info') {
+            const output = document.getElementById('output');
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+            output.textContent += `\n[${timestamp}] ${prefix} ${message}`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function clearOutput() {
+            document.getElementById('output').textContent = 'Debug log cleared 🧹\n';
+        }
+
+        // API Health Check
+        async function checkAPIHealth() {
+            try {
+                const response = await fetch('http://localhost:3000/health');
+                const data = await response.json();
+                
+                if (data.status === 'healthy') {
+                    document.getElementById('apiStatus').textContent = 'Connected';
+                    document.getElementById('apiStatus').className = 'status connected';
+                    log('API Health Check: Connected ✅', 'success');
+                    log(`Total Events: ${data.analytics.total_events}`);
+                    log(`Total Users: ${data.users.total_users}`);
+                } else {
+                    document.getElementById('apiStatus').textContent = 'Unhealthy';
+                    document.getElementById('apiStatus').className = 'status disconnected';
+                    log('API Health Check: Unhealthy ⚠️', 'error');
+                }
+            } catch (error) {
+                document.getElementById('apiStatus').textContent = 'Disconnected';
+                document.getElementById('apiStatus').className = 'status disconnected';
+                log(`API Health Check Failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Event Tracking Functions
+        function trackPageView() {
+            analytics.track('Page View', {
+                page: '/demo',
+                title: 'Analytics Client Demo',
+                section: 'demo'
+            });
+            log('Tracked: Page View event');
+        }
+
+        function trackButtonClick() {
+            analytics.track('Button Click', {
+                button_name: 'demo_button',
+                button_type: 'primary',
+                section: 'event_tracking'
+            });
+            log('Tracked: Button Click event');
+        }
+
+        function trackCustomEvent() {
+            analytics.track('Custom Demo Event', {
+                demo_property: 'test_value',
+                event_number: Math.floor(Math.random() * 1000),
+                timestamp: new Date().toISOString()
+            });
+            log('Tracked: Custom Demo Event');
+        }
+
+        function trackError() {
+            analytics.track('Demo Error', {
+                error_type: 'demo_error',
+                error_message: 'This is a test error for demo purposes',
+                severity: 'low'
+            });
+            log('Tracked: Demo Error event');
+        }
+
+        // User Identification Functions
+        function identifyUser() {
+            const email = document.getElementById('userEmail').value;
+            if (!email) {
+                log('Please enter an email address', 'error');
+                return;
+            }
+            
+            analytics.identify(email);
+            log(`Identified user: ${email}`);
+        }
+
+        function setUserProfile() {
+            const email = document.getElementById('userEmail').value;
+            if (!email) {
+                log('Please enter an email address', 'error');
+                return;
+            }
+
+            analytics.people.set({
+                $email: email,
+                $first_name: 'Demo',
+                $last_name: 'User',
+                subscription: 'demo',
+                demo_user: true
+            });
+            log(`Set profile for: ${email}`);
+        }
+
+        function resetUser() {
+            analytics.reset();
+            log('User identity reset');
+        }
+
+        // Analytics Controls
+        function muteAnalytics() {
+            analytics.mute();
+            log('Analytics muted - events will not be sent');
+        }
+
+        function unmuteAnalytics() {
+            analytics.unmute();
+            log('Analytics unmuted - events will be sent');
+        }
+
+        function checkMuteStatus() {
+            const isMuted = analytics.muted;
+            log(`Analytics is ${isMuted ? 'MUTED' : 'ACTIVE'}`);
+        }
+
+        function clearLocalStorage() {
+            localStorage.removeItem('mixpanel-lite');
+            log('LocalStorage cleared - offline events removed', 'warning');
+        }
+
+        // API Metrics
+        async function getHealthMetrics() {
+            try {
+                const response = await fetch('http://localhost:3000/health');
+                const data = await response.json();
+                
+                log('=== API HEALTH METRICS ===');
+                log(`Status: ${data.status}`);
+                log(`Total Events: ${data.analytics.total_events}`);
+                log(`Events (24h): ${data.analytics.events_24h}`);
+                log(`Events Stitched: ${data.analytics.events_stitched}`);
+                log(`Total Users: ${data.users.total_users}`);
+                log(`User States: ${JSON.stringify(data.users.by_state)}`);
+                log(`Identity Mappings: ${data.identity.total_mappings}`);
+                log('========================');
+            } catch (error) {
+                log(`Failed to get health metrics: ${error.message}`, 'error');
+            }
+        }
+
+        async function viewIdentityMetrics() {
+            try {
+                const response = await fetch('http://localhost:3000/health');
+                const data = await response.json();
+                
+                log('=== IDENTITY METRICS ===');
+                log(`Anonymous Users: ${data.users.by_state.anonymous || 0}`);
+                log(`Identified Users: ${data.users.by_state.identified || 0}`);
+                log(`Events Stitched: ${data.analytics.events_stitched}`);
+                log(`Identity Mappings: ${data.identity.total_mappings}`);
+                log(`Identifications (24h): ${data.users.identifications_24h}`);
+                log('=======================');
+            } catch (error) {
+                log(`Failed to get identity metrics: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-check API health on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAPIHealth();
+            
+            // Track page load
+            setTimeout(() => {
+                trackPageView();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
