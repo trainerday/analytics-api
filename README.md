@@ -1,26 +1,26 @@
 # Analytics API
 
-Open-source analytics API that provides a drop-in replacement for Mixpanel, storing events in your own PostgreSQL database for improved querying, data ownership, and cost optimization.
+Open-source analytics API that provides a self-hosted alternative to popular analytics services, storing events in your own PostgreSQL database for improved querying, data ownership, and cost optimization.
 
 ## 🚀 Quick Start
 
 1. **Clone and install**: `git clone && npm install`
 2. **Follow setup instructions**: See [setup/README.md](./setup/README.md) for complete setup guide
 3. **Start the API**: `npm run dev`
-4. **Update your client**: Point Mixpanel endpoints to your API
+4. **Update your client**: Point analytics endpoints to your API
 
 ## ✨ Features
 
-- 🔄 **Drop-in Mixpanel replacement** - Works with existing mixpanel-lite/mixpanel-js code
-- 📊 **Optimized PostgreSQL schema** - Better performance than Mixpanel's JSON structure
+- 🔄 **Drop-in compatibility** - Works with existing mixpanel-lite client library
+- 📊 **Optimized PostgreSQL schema** - Better performance than external analytics services
 - 🏠 **Data ownership** - Your data stays in your infrastructure
-- 💰 **Cost savings** - Eliminate per-event pricing
-- 🛠️ **Complete migration tools** - Export historical data from Mixpanel
-- 🔍 **Better querying** - SQL analytics instead of Mixpanel's limited interface
+- 💰 **Cost savings** - Eliminate per-event pricing from SaaS analytics
+- 🛠️ **Complete migration tools** - Export historical data from existing analytics providers
+- 🔍 **Better querying** - Direct SQL access instead of limited dashboard interfaces
 
 ## Purpose
 
-This API acts as a drop-in replacement for Mixpanel's tracking endpoints, allowing TrainerDay to:
+This API acts as a self-hosted alternative to external analytics services, allowing TrainerDay to:
 - Store analytics data in our own PostgreSQL data warehouse
 - Optimize data structure for better query performance
 - Maintain full control over analytics data
@@ -46,7 +46,7 @@ For complete database schema, setup instructions, and migration tools, see:
 GET /track?data={base64_encoded_data}&_={timestamp}
 ```
 
-Handles `mixpanel.track()` calls from mixpanel-lite library.
+Handles event tracking calls from mixpanel-lite client library.
 
 **Expected Data Format:**
 ```json
@@ -67,7 +67,7 @@ Handles `mixpanel.track()` calls from mixpanel-lite library.
 GET /engage?data={base64_encoded_data}&_={timestamp}
 ```
 
-Handles `mixpanel.people.set()` calls from mixpanel-lite library.
+Handles user profile updates from mixpanel-lite client library.
 
 **Expected Data Format:**
 ```json
@@ -90,9 +90,9 @@ Returns API status and database connectivity.
 
 ## How It Works
 
-The API provides a seamless drop-in replacement for Mixpanel:
+The API provides a seamless self-hosted analytics solution:
 
-1. **Receives events** in Mixpanel's base64-encoded format
+1. **Receives events** in standard base64-encoded format
 2. **Processes and optimizes** data structure for PostgreSQL
 3. **Performs identity stitching** to link anonymous and identified users
 4. **Stores in optimized schema** with proper indexing for fast queries
