@@ -53,12 +53,12 @@ node 4-import-mixpanel.js --batch-size 1000 --input-dir ./mixpanel_data
 ```
 **Purpose**: Transform and load your Mixpanel data into PostgreSQL.
 
-### Verification
+### Step 5: Verify Setup
 ```bash
 # Verify complete setup
-node verify-setup.js
+node 5-verify-setup.js
 ```
-**Purpose**: Check that everything is working correctly.
+**Purpose**: Check that everything is working correctly and show data insights.
 
 ## Script Details
 

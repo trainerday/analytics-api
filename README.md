@@ -281,17 +281,16 @@ mixpanel.init('your-analytics-token', {
 - `3-download-mixpanel.js` - Download historical data from Mixpanel API
 - `4-import-mixpanel.js` - Transform and import Mixpanel data to PostgreSQL
 
-**Verification & Utilities:**
-- `verify-setup.js` - Validate complete setup and data quality
-- `mixpanel-exporter.py` - Alternative Python-based Mixpanel downloader
+**Verification:**
+- `5-verify-setup.js` - Validate complete setup and data quality
 
-### Verification
+### Step 5: Verify Setup
 ```bash
 # Verify complete setup and data quality
-node setup/verify-setup.js
+node setup/5-verify-setup.js
 
 # Check specific date ranges
-node setup/verify-setup.js --start-date 2024-01-01 --end-date 2024-12-31
+node setup/5-verify-setup.js --start-date 2024-01-01 --end-date 2024-12-31
 ```
 
 ## Benefits
