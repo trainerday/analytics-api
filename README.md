@@ -7,7 +7,7 @@ Open-source analytics API that provides a drop-in replacement for Mixpanel, stor
 Replace Mixpanel with your own analytics infrastructure in 3 steps:
 
 1. **Deploy the API**: `git clone && npm install && npm start`
-2. **Create the database**: `node scripts/create-analytics-table.js`
+2. **Setup the database**: `node setup/create-analytics-table.js`
 3. **Update your client**: Change Mixpanel endpoints to point to your API
 
 ## ✨ Features
@@ -204,7 +204,7 @@ npm start    # Production
 ### Testing
 ```bash
 # Test database connection
-node scripts/test-db.js
+node setup/test-db.js
 
 # Test API endpoints
 curl "http://localhost:3000/health"
@@ -229,31 +229,31 @@ This project includes complete migration tools to move from Mixpanel to your own
 ### 1. Database Setup
 ```bash
 # Create analytics table and indexes
-node scripts/create-analytics-table.js
+node setup/create-analytics-table.js
 
 # Verify database connection
-node scripts/test-db-connection.js
+node setup/test-db-connection.js
 ```
 
 ### 2. Export Data from Mixpanel
 ```bash
 # Download historical data (requires Mixpanel export credentials)
-python3 scripts/mixpanel-exporter.py --mode incremental
+python3 setup/mixpanel-exporter.py --mode incremental
 
 # For full historical export
-python3 scripts/mixpanel-exporter.py --mode full --days-back 365
+python3 setup/mixpanel-exporter.py --mode full --days-back 365
 
 # For specific date range
-python3 scripts/mixpanel-exporter.py --mode full --start-date 2024-01-01 --end-date 2024-12-31
+python3 setup/mixpanel-exporter.py --mode full --start-date 2024-01-01 --end-date 2024-12-31
 ```
 
 ### 3. Import Historical Data
 ```bash
 # Transform and import Mixpanel JSON files
-node scripts/import-mixpanel-data.js --input-dir ./mixpanel_data
+node setup/import-mixpanel-data.js --input-dir ./mixpanel_data
 
 # With options
-node scripts/import-mixpanel-data.js \
+node setup/import-mixpanel-data.js \
   --input-dir ./mixpanel_data \
   --batch-size 1000 \
   --start-date 2024-01-01 \
@@ -293,13 +293,13 @@ mixpanel.init('your-analytics-token', {
 ### Migration Verification
 ```bash
 # Check migration completeness
-node scripts/verify-migration.js
+node setup/verify-migration.js
 
 # Compare event counts by day
-node scripts/compare-counts.js --start-date 2024-01-01
+node setup/compare-counts.js --start-date 2024-01-01
 
 # Validate data quality
-node scripts/validate-data-quality.js
+node setup/validate-data-quality.js
 ```
 
 ## Benefits
