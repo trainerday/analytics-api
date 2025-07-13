@@ -116,8 +116,15 @@ See the [Setup Guide](./setup/README.md) for complete configuration instructions
 Use the [analytics-client](https://github.com/trainerday/analytics-client) library to connect to your self-hosted API:
 
 ### Installation
+
+**Option 1: NPM (Recommended)**
+```bash
+npm install @trainerday/analytics-client
+```
+
+**Option 2: CDN**
 ```html
-<script src="https://cdn.jsdelivr.net/gh/trainerday/analytics-client@latest/dist/mixpanel-lite.min.js"></script>
+<script src="https://unpkg.com/@trainerday/analytics-client@latest/dist/mixpanel-lite.min.js"></script>
 ```
 
 ### Configuration  
