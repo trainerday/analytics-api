@@ -19,7 +19,9 @@ ca-certificate.crt
 
 # Mixpanel data exports
 mixpanel_data/
-*.json
+mixpanel_*.json
+!package.json
+!package-lock.json
 
 # Express specific
 public/uploads/
