@@ -94,14 +94,23 @@ No other code changes needed! Your existing Mixpanel tracking code will work wit
 
 ### Database SSL Certificate
 
-If your PostgreSQL instance requires an SSL certificate:
+Some managed PostgreSQL services (like DigitalOcean, AWS RDS) require SSL certificates:
 
-1. Download your certificate file (usually `ca-certificate.crt`)
-2. Place it in the project root
-3. Update your `.env`:
-   ```
+1. **Download your certificate file** from your database provider
+   - DigitalOcean: `ca-certificate.crt`
+   - AWS RDS: `rds-ca-2019-root.pem`
+   - Google Cloud: `server-ca.pem`
+
+2. **Place certificate in project root** (same directory as package.json)
+
+3. **Update your `.env`** to uncomment and set the certificate:
+   ```env
    DB_SSLROOTCERT=ca-certificate.crt
    ```
+
+4. **If you don't need SSL certificates** (local PostgreSQL, some cloud providers):
+   - Keep the `DB_SSLROOTCERT` line commented out
+   - Or set `DB_SSLMODE=disable` for completely local setups
 
 ### Mixpanel Export Credentials
 
