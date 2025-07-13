@@ -117,7 +117,7 @@ Use the [analytics-client](https://github.com/trainerday/analytics-client) libra
 
 ### Installation
 ```html
-<script src="https://cdn.jsdelivr.net/gh/trainerday/analytics-client@latest/dist/analytics-client.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/trainerday/analytics-client@latest/dist/mixpanel-lite.min.js"></script>
 ```
 
 ### Configuration  
