@@ -222,45 +222,44 @@ git remote add dokku dokku@server:analytics-api
 git push dokku main
 ```
 
-## Data Migration
+## Setup & Migration
 
-This project includes complete migration tools to move from Mixpanel to your own analytics infrastructure.
+Complete your analytics setup in 4 easy steps:
 
-### 1. Database Setup
+### Step 1: Test Database Connection
 ```bash
-# Create analytics table and indexes
-node setup/create-analytics-table.js
-
-# Verify database connection
-node setup/test-db-connection.js
+# Verify PostgreSQL connectivity and credentials
+node setup/1-test-database.js
 ```
 
-### 2. Export Data from Mixpanel
+### Step 2: Create Analytics Table
 ```bash
-# Download historical data (requires Mixpanel export credentials)
-python3 setup/mixpanel-exporter.py --mode incremental
-
-# For full historical export
-python3 setup/mixpanel-exporter.py --mode full --days-back 365
-
-# For specific date range
-python3 setup/mixpanel-exporter.py --mode full --start-date 2024-01-01 --end-date 2024-12-31
+# Create the analytics table with optimized indexes
+node setup/2-create-table.js
 ```
 
-### 3. Import Historical Data
+### Step 3: Download Mixpanel Data (Optional)
 ```bash
-# Transform and import Mixpanel JSON files
-node setup/import-mixpanel-data.js --input-dir ./mixpanel_data
+# Download historical data from Mixpanel
+node setup/3-download-mixpanel.js --days-back 365
 
-# With options
-node setup/import-mixpanel-data.js \
-  --input-dir ./mixpanel_data \
-  --batch-size 1000 \
-  --start-date 2024-01-01 \
-  --end-date 2024-12-31
+# Or for specific date range
+node setup/3-download-mixpanel.js --start-date 2024-01-01 --end-date 2024-12-31
+
+# For incremental updates
+node setup/3-download-mixpanel.js --incremental
 ```
 
-### 4. Switch Client-Side Tracking
+### Step 4: Import Mixpanel Data (Optional)
+```bash
+# Import downloaded Mixpanel data to PostgreSQL
+node setup/4-import-mixpanel.js
+
+# With custom options
+node setup/4-import-mixpanel.js --batch-size 1000 --input-dir ./mixpanel_data
+```
+
+### Step 5: Switch Client-Side Tracking
 ```javascript
 // Before: Standard Mixpanel
 mixpanel.init('your-mixpanel-token');
@@ -272,34 +271,27 @@ mixpanel.init('your-analytics-token', {
 });
 ```
 
-### Migration Scripts Included
+### Setup Scripts Included
 
-**Database Scripts:**
-- `create-analytics-table.js` - Creates table with proper indexes
-- `test-db-connection.js` - Verifies PostgreSQL connectivity
-- `test-db-connection.py` - Python version for database testing
+**Core Setup (Required):**
+- `1-test-database.js` - Test PostgreSQL connection and credentials
+- `2-create-table.js` - Create analytics table with optimized indexes
 
-**Data Export Scripts:**
-- `mixpanel-exporter.py` - Smart Mixpanel data downloader with rate limiting
+**Migration Scripts (Optional):**
+- `3-download-mixpanel.js` - Download historical data from Mixpanel API
+- `4-import-mixpanel.js` - Transform and import Mixpanel data to PostgreSQL
 
-**Data Import Scripts:**
-- `import-mixpanel-data.js` - Transform and load historical data
-- `validate-import.js` - Compare counts and detect issues
+**Verification & Utilities:**
+- `verify-setup.js` - Validate complete setup and data quality
+- `mixpanel-exporter.py` - Alternative Python-based Mixpanel downloader
 
-**Verification Scripts:**
-- `verify-migration.js` - Data quality checks and statistics
-- `compare-counts.js` - Compare event counts between Mixpanel and PostgreSQL
-
-### Migration Verification
+### Verification
 ```bash
-# Check migration completeness
-node setup/verify-migration.js
+# Verify complete setup and data quality
+node setup/verify-setup.js
 
-# Compare event counts by day
-node setup/compare-counts.js --start-date 2024-01-01
-
-# Validate data quality
-node setup/validate-data-quality.js
+# Check specific date ranges
+node setup/verify-setup.js --start-date 2024-01-01 --end-date 2024-12-31
 ```
 
 ## Benefits
