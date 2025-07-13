@@ -11,7 +11,7 @@ Open-source analytics API that provides a self-hosted alternative to popular ana
 
 ## ✨ Features
 
-- 🔄 **Drop-in compatibility** - Works with existing mixpanel-lite client library
+- 🔄 **Drop-in compatibility** - Works with analytics-client library
 - 📊 **Optimized PostgreSQL schema** - Better performance than external analytics services
 - 🏠 **Data ownership** - Your data stays in your infrastructure
 - 💰 **Cost savings** - Eliminate per-event pricing from SaaS analytics
@@ -46,7 +46,7 @@ For complete database schema, setup instructions, and migration tools, see:
 GET /track?data={base64_encoded_data}&_={timestamp}
 ```
 
-Handles event tracking calls from mixpanel-lite client library.
+Handles event tracking calls from analytics-client library.
 
 **Expected Data Format:**
 ```json
@@ -67,7 +67,7 @@ Handles event tracking calls from mixpanel-lite client library.
 GET /engage?data={base64_encoded_data}&_={timestamp}
 ```
 
-Handles user profile updates from mixpanel-lite client library.
+Handles user profile updates from analytics-client library.
 
 **Expected Data Format:**
 ```json
@@ -101,7 +101,7 @@ For detailed data processing and field mapping documentation, see the [Setup Gui
 
 ## Configuration
 
-Configure your PostgreSQL database connection and update your mixpanel-lite client to point to your API endpoints.
+Configure your PostgreSQL database connection and update your analytics-client to point to your API endpoints.
 
 See the [Setup Guide](./setup/README.md) for complete configuration instructions including:
 - Database connection setup
