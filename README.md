@@ -238,28 +238,34 @@ node setup/1-test-database.js
 node setup/2-create-table.js
 ```
 
-### Step 3: Download Mixpanel Data (Optional)
+### Step 3: Verify Database Setup
+```bash
+# Verify database connection and table creation
+node setup/3-verify-setup.js
+```
+
+### Step 4: Download Mixpanel Data (Optional)
 ```bash
 # Download historical data from Mixpanel
-node setup/3-download-mixpanel.js --days-back 365
+node setup/4-download-mixpanel.js --days-back 365
 
 # Or for specific date range
-node setup/3-download-mixpanel.js --start-date 2024-01-01 --end-date 2024-12-31
+node setup/4-download-mixpanel.js --start-date 2024-01-01 --end-date 2024-12-31
 
 # For incremental updates
-node setup/3-download-mixpanel.js --incremental
+node setup/4-download-mixpanel.js --incremental
 ```
 
-### Step 4: Import Mixpanel Data (Optional)
+### Step 5: Import Mixpanel Data (Optional)
 ```bash
 # Import downloaded Mixpanel data to PostgreSQL
-node setup/4-import-mixpanel.js
+node setup/5-import-mixpanel.js
 
 # With custom options
-node setup/4-import-mixpanel.js --batch-size 1000 --input-dir ./mixpanel_data
+node setup/5-import-mixpanel.js --batch-size 1000 --input-dir ./mixpanel_data
 ```
 
-### Step 5: Switch Client-Side Tracking
+### Step 6: Switch Client-Side Tracking
 ```javascript
 // Before: Standard Mixpanel
 mixpanel.init('your-mixpanel-token');
@@ -277,21 +283,12 @@ mixpanel.init('your-analytics-token', {
 - `1-test-database.js` - Test PostgreSQL connection and credentials
 - `2-create-table.js` - Create analytics table with optimized indexes
 
+**Database Verification:**
+- `3-verify-setup.js` - Validate database setup and show insights
+
 **Migration Scripts (Optional):**
-- `3-download-mixpanel.js` - Download historical data from Mixpanel API
-- `4-import-mixpanel.js` - Transform and import Mixpanel data to PostgreSQL
-
-**Verification:**
-- `5-verify-setup.js` - Validate complete setup and data quality
-
-### Step 5: Verify Setup
-```bash
-# Verify complete setup and data quality
-node setup/5-verify-setup.js
-
-# Check specific date ranges
-node setup/5-verify-setup.js --start-date 2024-01-01 --end-date 2024-12-31
-```
+- `4-download-mixpanel.js` - Download historical data from Mixpanel API
+- `5-import-mixpanel.js` - Transform and import Mixpanel data to PostgreSQL
 
 ## Benefits
 

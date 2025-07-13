@@ -30,35 +30,35 @@ node 2-create-table.js
 ```
 **Purpose**: Create the optimized analytics table with proper indexes.
 
-### Step 3: Download Mixpanel Data (Optional)
+### Step 3: Verify Database Setup
+```bash
+# Verify database connection and table creation
+node 3-verify-setup.js
+```
+**Purpose**: Check that database setup is working correctly before proceeding.
+
+### Step 4: Download Mixpanel Data (Optional)
 ```bash
 # Download last 365 days
-node 3-download-mixpanel.js --days-back 365
+node 4-download-mixpanel.js --days-back 365
 
 # Download specific date range
-node 3-download-mixpanel.js --start-date 2024-01-01 --end-date 2024-12-31
+node 4-download-mixpanel.js --start-date 2024-01-01 --end-date 2024-12-31
 
 # Incremental download (from last file to yesterday)
-node 3-download-mixpanel.js --incremental
+node 4-download-mixpanel.js --incremental
 ```
 **Purpose**: Export your historical data from Mixpanel. Skip if starting fresh.
 
-### Step 4: Import Mixpanel Data (Optional)
+### Step 5: Import Mixpanel Data (Optional)
 ```bash
 # Import all downloaded data
-node 4-import-mixpanel.js
+node 5-import-mixpanel.js
 
 # Import with custom options
-node 4-import-mixpanel.js --batch-size 1000 --input-dir ./mixpanel_data
+node 5-import-mixpanel.js --batch-size 1000 --input-dir ./mixpanel_data
 ```
 **Purpose**: Transform and load your Mixpanel data into PostgreSQL.
-
-### Step 5: Verify Setup
-```bash
-# Verify complete setup
-node 5-verify-setup.js
-```
-**Purpose**: Check that everything is working correctly and show data insights.
 
 ## Script Details
 
