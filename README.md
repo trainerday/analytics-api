@@ -6,12 +6,14 @@ Open-source analytics API that provides a self-hosted alternative to popular ana
 
 1. **Clone and install**: `git clone && npm install`
 2. **Follow setup instructions**: See [setup/README.md](./setup/README.md) for complete setup guide
-3. **Start the API**: `npm run dev`
-4. **Update your client**: Point analytics endpoints to your API
+3. **Start the API**: `npm start`
+4. **Test with demo**: Visit http://localhost:3000/demo/index.html
+5. **Integrate client**: Use [analytics-client](https://github.com/trainerday/analytics-client) library
 
 ## ✨ Features
 
-- 🔄 **Drop-in compatibility** - Works with analytics-client library
+- 🔄 **Drop-in compatibility** - Works with [analytics-client](https://github.com/trainerday/analytics-client) library
+- 🎯 **Interactive demo** - Complete testing interface at `/demo/index.html`
 - 📊 **Optimized PostgreSQL schema** - Better performance than external analytics services
 - 🏠 **Data ownership** - Your data stays in your infrastructure
 - 💰 **Cost savings** - Eliminate per-event pricing from SaaS analytics
@@ -108,6 +110,34 @@ See the [Setup Guide](./setup/README.md) for complete configuration instructions
 - Environment variables
 - Client integration
 - SSL certificate configuration
+
+## Client Integration
+
+Use the [analytics-client](https://github.com/trainerday/analytics-client) library to connect to your self-hosted API:
+
+### Installation
+```html
+<script src="https://cdn.jsdelivr.net/gh/trainerday/analytics-client@latest/dist/analytics-client.min.js"></script>
+```
+
+### Configuration  
+```javascript
+// Alias for cleaner code
+var analytics = mixpanel;
+
+// Point to your self-hosted API
+analytics.init('your-analytics-token', {
+    trackingUrl: 'https://your-domain.com/track?data=',
+    engageUrl: 'https://your-domain.com/engage?data='
+});
+
+// Use standard analytics methods
+analytics.track('Event Name', { property: 'value' });
+analytics.identify('user@email.com');
+analytics.people.set({ $email: 'user@email.com' });
+```
+
+**Demo**: Test the complete integration at `/demo/index.html` when your API is running.
 
 ## Testing & Development
 
