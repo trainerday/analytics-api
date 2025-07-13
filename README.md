@@ -4,11 +4,10 @@ Open-source analytics API that provides a drop-in replacement for Mixpanel, stor
 
 ## 🚀 Quick Start
 
-Replace Mixpanel with your own analytics infrastructure in 3 steps:
-
-1. **Deploy the API**: `git clone && npm install && npm start`
-2. **Setup the database**: `node setup/create-analytics-table.js`
-3. **Update your client**: Change Mixpanel endpoints to point to your API
+1. **Clone and install**: `git clone && npm install`
+2. **Follow setup instructions**: See [setup/README.md](./setup/README.md) for complete setup guide
+3. **Start the API**: `npm run dev`
+4. **Update your client**: Point Mixpanel endpoints to your API
 
 ## ✨ Features
 
@@ -222,73 +221,17 @@ git remote add dokku dokku@server:analytics-api
 git push dokku main
 ```
 
-## Setup & Migration
+## Setup
 
-Complete your analytics setup in 4 easy steps:
+For complete setup instructions including database configuration and Mixpanel migration, see:
 
-### Step 1: Test Database Connection
-```bash
-# Verify PostgreSQL connectivity and credentials
-node setup/1-test-database.js
-```
+**📋 [Setup Instructions](./setup/README.md)**
 
-### Step 2: Create Analytics Table
-```bash
-# Create the analytics table with optimized indexes
-node setup/2-create-table.js
-```
-
-### Step 3: Verify Database Setup
-```bash
-# Verify database connection and table creation
-node setup/3-verify-setup.js
-```
-
-### Step 4: Download Mixpanel Data (Optional)
-```bash
-# Download historical data from Mixpanel
-node setup/4-download-mixpanel.js --days-back 365
-
-# Or for specific date range
-node setup/4-download-mixpanel.js --start-date 2024-01-01 --end-date 2024-12-31
-
-# For incremental updates
-node setup/4-download-mixpanel.js --incremental
-```
-
-### Step 5: Import Mixpanel Data (Optional)
-```bash
-# Import downloaded Mixpanel data to PostgreSQL
-node setup/5-import-mixpanel.js
-
-# With custom options
-node setup/5-import-mixpanel.js --batch-size 1000 --input-dir ./mixpanel_data
-```
-
-### Step 6: Switch Client-Side Tracking
-```javascript
-// Before: Standard Mixpanel
-mixpanel.init('your-mixpanel-token');
-
-// After: Your analytics API
-mixpanel.init('your-analytics-token', {
-    trackingUrl: 'https://your-domain.com/track?data=',
-    engageUrl: 'https://your-domain.com/engage?data='
-});
-```
-
-### Setup Scripts Included
-
-**Core Setup (Required):**
-- `1-test-database.js` - Test PostgreSQL connection and credentials
-- `2-create-table.js` - Create analytics table with optimized indexes
-
-**Database Verification:**
-- `3-verify-setup.js` - Validate database setup and show insights
-
-**Migration Scripts (Optional):**
-- `4-download-mixpanel.js` - Download historical data from Mixpanel API
-- `5-import-mixpanel.js` - Transform and import Mixpanel data to PostgreSQL
+The setup guide covers:
+- Database connection and table creation
+- Optional Mixpanel data migration  
+- Verification and troubleshooting
+- Client-side integration
 
 ## Benefits
 

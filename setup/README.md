@@ -1,6 +1,15 @@
-# Setup Scripts
+# Analytics API Setup Guide
 
-Complete your analytics setup in 4 sequential steps. Each script handles one specific task to make the process clear and debuggable.
+Complete guide to set up your analytics infrastructure and migrate from Mixpanel.
+
+## Overview
+
+This setup process will:
+1. ✅ Configure your PostgreSQL database
+2. ✅ Create optimized analytics table
+3. ✅ Verify everything works
+4. ✅ Optionally migrate historical data from Mixpanel
+5. ✅ Update your client-side tracking
 
 ## Prerequisites
 
@@ -60,19 +69,28 @@ node 5-import-mixpanel.js --batch-size 1000 --input-dir ./mixpanel_data
 ```
 **Purpose**: Transform and load your Mixpanel data into PostgreSQL.
 
-## Script Details
+## Client-Side Integration
 
-| Script | Purpose | Language |
-|--------|---------|----------|
-| `test-db-connection.py` | Test PostgreSQL connectivity | Python |
-| `test-db-connection.js` | Test PostgreSQL connectivity | Node.js |
-| `create-analytics-table.js` | Create analytics table with indexes | Node.js |
-| `mixpanel-exporter.py` | Download data from Mixpanel API | Python |
-| `import-mixpanel-data.js` | Transform and load Mixpanel JSON | Node.js |
-| `verify-migration.js` | Validate migration completeness | Node.js |
-| `compare-counts.js` | Compare event counts by date | Node.js |
+Once your analytics API is running, update your client-side tracking:
 
-## Configuration
+### Before (Standard Mixpanel)
+```javascript
+mixpanel.init('your-mixpanel-token');
+mixpanel.track('Event Name', { property: 'value' });
+```
+
+### After (Your Analytics API)
+```javascript
+mixpanel.init('your-analytics-token', {
+    trackingUrl: 'https://your-domain.com/track?data=',
+    engageUrl: 'https://your-domain.com/engage?data='
+});
+mixpanel.track('Event Name', { property: 'value' });
+```
+
+No other code changes needed! Your existing Mixpanel tracking code will work with your analytics API.
+
+## Configuration Details
 
 ### Database SSL Certificate
 
@@ -110,14 +128,43 @@ The migration preserves all your Mixpanel data while optimizing the structure:
 
 ## Troubleshooting
 
-**Rate Limiting**: Mixpanel limits to 60 queries/hour. The exporter automatically handles this.
+### Common Issues
 
-**Large Datasets**: For projects with millions of events, consider:
-- Using date ranges to split the export
-- Increasing batch size for imports
-- Running imports during off-peak hours
+**Database Connection Failed**
+- Check your DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD in `.env`
+- Ensure PostgreSQL is running and accessible
+- Verify SSL settings if required
 
-**Memory Issues**: If Node.js runs out of memory:
+**Mixpanel Export Issues**
+- Verify your service account has export permissions
+- Check project ID is correct
+- Mixpanel rate limits to 60 queries/hour
+
+**Memory Issues**
+For large datasets, increase Node.js memory:
 ```bash
-node --max-old-space-size=4096 scripts/import-mixpanel-data.js
+node --max-old-space-size=4096 setup/5-import-mixpanel.js
 ```
+
+**Import Errors**
+- Ensure analytics table exists (run step 2)
+- Check JSON file format and permissions
+- Verify batch size isn't too large
+
+### Getting Help
+
+1. Run `node setup/3-verify-setup.js` to check your configuration
+2. Check the console output for specific error messages
+3. Ensure all environment variables are set correctly
+4. Verify database permissions and connectivity
+
+## Next Steps
+
+After completing setup:
+
+1. **Start the API**: `npm run dev` (development) or `npm start` (production)
+2. **Test the endpoints**: Use curl or Postman to verify `/health`, `/track`, `/engage`
+3. **Update your clients**: Point Mixpanel tracking to your API endpoints
+4. **Monitor data**: Use `node setup/3-verify-setup.js` to check data flow
+
+Your analytics infrastructure is now independent of Mixpanel!
