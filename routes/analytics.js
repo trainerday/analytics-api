@@ -126,46 +126,27 @@ function extractDeviceId(properties) {
 async function upsertUser(client, distinctId, userData = {}) {
     const now = new Date();
     const deviceId = extractDeviceId(userData);
+    const deviceIds = deviceId ? [deviceId] : [];
     
-    // Check if user exists
-    const existingUser = await client.query(
-        'SELECT * FROM analytics_users WHERE distinct_id = $1',
-        [distinctId]
-    );
+    // Use proper PostgreSQL upsert to avoid race conditions
+    const upsertQuery = `
+        INSERT INTO analytics_users (
+            distinct_id, user_state, device_ids, 
+            first_seen, last_seen, created_at, updated_at
+        )
+        VALUES ($1, 'anonymous', $2, $3, $3, $3, $3)
+        ON CONFLICT (distinct_id) DO UPDATE SET
+            last_seen = EXCLUDED.last_seen,
+            device_ids = CASE 
+                WHEN $2::jsonb != analytics_users.device_ids AND NOT (analytics_users.device_ids @> $2::jsonb)
+                THEN (analytics_users.device_ids::jsonb || $2::jsonb)
+                ELSE analytics_users.device_ids
+            END,
+            updated_at = EXCLUDED.updated_at
+        RETURNING id
+    `;
     
-    if (existingUser.rows.length > 0) {
-        // Update existing user
-        const existingDeviceIds = existingUser.rows[0].device_ids || [];
-        let updatedDeviceIds = existingDeviceIds;
-        
-        // Add new device ID if it doesn't exist
-        if (deviceId && !existingDeviceIds.includes(deviceId)) {
-            updatedDeviceIds = [...existingDeviceIds, deviceId];
-        }
-        
-        const updateQuery = `
-            UPDATE analytics_users 
-            SET last_seen = $1, 
-                device_ids = $2,
-                updated_at = $1
-            WHERE distinct_id = $3
-            RETURNING id
-        `;
-        return await client.query(updateQuery, [now, JSON.stringify(updatedDeviceIds), distinctId]);
-    } else {
-        // Create new anonymous user
-        const deviceIds = deviceId ? [deviceId] : [];
-        
-        const insertQuery = `
-            INSERT INTO analytics_users (
-                distinct_id, user_state, device_ids, 
-                first_seen, last_seen, created_at, updated_at
-            )
-            VALUES ($1, 'anonymous', $2, $3, $3, $3, $3)
-            RETURNING id
-        `;
-        return await client.query(insertQuery, [distinctId, JSON.stringify(deviceIds), now]);
-    }
+    return await client.query(upsertQuery, [distinctId, JSON.stringify(deviceIds), now]);
 }
 
 // Helper function to stitch identity - retroactively update events
