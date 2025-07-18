@@ -14,8 +14,10 @@ yarn-error.log*
 
 # Database certificates
 ca-certificate.crt
+postgres.crt
 *.pem
 *.key
+*.crt
 
 # Mixpanel data exports
 mixpanel_data/
@@ -42,3 +44,4 @@ pids/
 # OS
 .DS_Store
 Thumbs.db
+README_trainerday.md
